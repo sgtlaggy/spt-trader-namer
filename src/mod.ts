@@ -1,11 +1,11 @@
 import { DependencyContainer } from "tsyringe";
 
-import { IPostDBLoadMod } from "@spt-aki/models/external/IPostDBLoadMod";
-import { ILogger } from "@spt-aki/models/spt/utils/ILogger";
-import { DatabaseServer } from "@spt-aki/servers/DatabaseServer";
-import { ITraderBase } from "@spt-aki/models/eft/common/tables/ITrader";
-import { ImageRouter } from "@spt-aki/routers/ImageRouter";
-import { VFS } from "@spt-aki/utils/VFS";
+import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
+import { ILogger } from "@spt/models/spt/utils/ILogger";
+import { DatabaseServer } from "@spt/servers/DatabaseServer";
+import { ITraderBase } from "@spt/models/eft/common/tables/ITrader";
+import { ImageRouter } from "@spt/routers/ImageRouter";
+import { VFS } from "@spt/utils/VFS";
 import path from "path";
 
 import { NAMES } from "./names";
