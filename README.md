@@ -1,6 +1,7 @@
 # Trader Namer
 
-This mod will let you change trader's nicknames and avatars.
+This mod will let you change traders' nicknames and avatars.
+
 The novel difference from other avatar-swapping mods is that it uses trader nicknames instead of obscure avatar IDs that don't match the trader ID.
 
 Both features of the mod should work for custom traders as long as this mod loads after them.
