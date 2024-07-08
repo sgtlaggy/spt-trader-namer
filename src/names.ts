@@ -10,6 +10,8 @@ class ITraderNames {
     Ragman?: string;
     Jaeger?: string;
     Lightkeeper?: string;
+    "BTR Driver"?: string;
+    "Ref"?: string;
     [key: string]: string;
 }
 

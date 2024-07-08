@@ -16,11 +16,12 @@ class Mod implements IPostDBLoadMod {
         const logger = container.resolve<ILogger>("WinstonLogger");
         const db = container.resolve<DatabaseServer>("DatabaseServer").getTables();
         const traderTable = db.traders;
+        const en = db.locales.global.en;
 
-        const traders: Record<string, ITraderBase> = {};
-        for (const trader of Object.values(traderTable)) {
-            traders[trader.base.nickname] = trader.base;
-        }
+        const traders: Record<string, ITraderBase> = Object.fromEntries(
+            Object.values(traderTable)
+                .map((trader) => [en[`${trader.base._id} Nickname`], trader.base])
+                .filter((([nick, _]) => (nick !== undefined))));
 
         for (const [oldName, newName] of Object.entries(NAMES)) {
             const trader = traders[oldName];
