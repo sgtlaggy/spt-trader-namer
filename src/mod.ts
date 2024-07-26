@@ -1,10 +1,10 @@
 import { DependencyContainer } from "tsyringe";
 
+import { ITraderBase } from "@spt/models/eft/common/tables/ITrader";
 import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
-import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { ITraderBase } from "@spt/models/eft/common/tables/ITrader";
 import { ImageRouter } from "@spt/routers/ImageRouter";
+import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { VFS } from "@spt/utils/VFS";
 import path from "path";
 
