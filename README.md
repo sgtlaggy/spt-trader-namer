@@ -23,6 +23,18 @@ Examples:
     "Fence": "Drebin"
 }
 ```
+Details like the trader's Location and Description can also be changed with extended syntax.
+Valid keys are "FullName", "FirstName", "Nickname", "Location", and "Description". All are case-sensitive.
+```json
+{
+  "Prapor": {
+    "Nickname": "Sidorovich",
+    "Location": "Rookie Village in the Cordon",
+    "Description": "A reliable source of equipment for stalkers."
+  },
+  "Fence": "Drebin"
+}
+```
 
 ## Setting Trader Avatars
 Name an image based on the trader's default English nickname like `Prapor.jpg` and put it in the mod's `avatars` folder.
