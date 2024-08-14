@@ -25,6 +25,10 @@ class Mod implements IPostDBLoadMod {
 
         for (const [oldName, newName] of Object.entries(NAMES)) {
             const trader = traders[oldName];
+            var details = newName;
+            if ((typeof newName) === "string") {
+                details = { Nickname: newName as string }
+            }
 
             if (!trader) {
                 logger.info(`[TraderNamer] ${oldName} does not exist, not changing name.`);
@@ -34,7 +38,9 @@ class Mod implements IPostDBLoadMod {
             logger.info(`[TraderNamer] Changing ${oldName}'s name to ${newName}`);
 
             for (const locale of Object.values(db.locales.global)) {
-                locale[`${trader._id} Nickname`] = newName;
+                for (const [detail, value] of Object.entries(details)) {
+                    locale[`${trader._id} ${detail}`] = value;
+                }
             }
         }
 
