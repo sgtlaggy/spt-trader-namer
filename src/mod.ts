@@ -35,7 +35,9 @@ class Mod implements IPostDBLoadMod {
                 continue;
             }
 
-            logger.info(`[TraderNamer] Changing ${oldName}'s name to ${newName}`);
+            for (const [key, value] of Object.entries(details)) {
+                logger.info(`[TraderNamer] Changing ${oldName}'s ${key} to ${value}`);
+            }
 
             for (const locale of Object.values(locales.global)) {
                 for (const [detail, value] of Object.entries(details)) {
