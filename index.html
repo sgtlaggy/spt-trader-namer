@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
+    <title>Trader Namer Config</title>
+  </head>
+
+  <template id="TraderProperty">
+    <div class="trader-property">
+      <button type="button" onclick="this.parentNode.remove()" title="Remove Property">⌫</button>
+      <select onchange="onPropertyValueChanged()">
+        <option value="Nickname">Nickname</option>
+        <option value="Location">Location</option>
+        <option value="Description">Description</option>
+        <!--
+        <optgroup label="Unused">
+        <option value="FullName">FullName</option>
+        <option value="FirstName">FirstName</option>
+        </optgroup>
+        -->
+      </select>
+      <input>
+    </div>
+  </template>
+  
+  <template id="Trader">
+    <div class="trader">
+      <button type="button" onclick="this.parentNode.remove()" title="Remove Trader">⌫</button>
+      <label>Trader Name</label>
+      <input>
+      <br>
+      <div class="trader-properties"></div>
+      <button type="button" onclick="addProperty(this.parentNode)">Add Property</button>
+    </div>
+  </template>
+  
+  <body>
+    <div id="Traders"></div>
+    <button type="button" onclick="addTrader()">Add Trader</button>
+    <br>
+
+    <button type="button" onclick="loadConfig()">⤒ Load</button>
+    <input type="file" onchange="onConfigUploaded()">
+    <button type="button" onclick="jsonifyConfig()">JSONify</button>
+    <button type="button" onclick="saveConfig()">Download ⭳</button>
+    <a id="Download" href="" download="names.json" hidden></a>
+    <br>
+    <textarea id="ConfigJsonArea" class="config-area" rows="7"></textarea>
+    <br>
+    <label>Theme</label>
+    <select onchange="onChangeTheme()">
+      <option value="light dark">Auto</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </body>
+</html>

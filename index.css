@@ -1,0 +1,25 @@
+:root {
+    color-scheme: light dark;
+    margin: auto;
+    width: 75%;
+    text-align: center;
+}
+
+.trader {
+    border: 1px solid light-dark(black, darkgrey);
+    border-radius: 10px;
+}
+
+.trader-property {
+    display: flex;
+    justify-content: center;
+}
+
+.trader-property > * {
+    height: fit-content;
+}
+
+#ConfigJsonArea {
+    width: 75%;
+    resize: none;
+}
