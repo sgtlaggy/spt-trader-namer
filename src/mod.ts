@@ -5,7 +5,7 @@ import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { ImageRouter } from "@spt/routers/ImageRouter";
 import { DatabaseService } from "@spt/services/DatabaseService";
-import { VFS } from "@spt/utils/VFS";
+import { FileSystemSync } from "@spt/utils/FileSystemSync";
 import path from "path";
 
 import { NAMES } from "./names";
@@ -46,12 +46,13 @@ class Mod implements IPostDBLoadMod {
             }
         }
 
-        const vfs = container.resolve<VFS>("VFS");
+        const fileSystem = container.resolve<FileSystemSync>("FileSystemSync");
         const imageRouter = container.resolve<ImageRouter>("ImageRouter");
         const imagesPath = path.resolve(__dirname, "../avatars");
 
-        for (const image of vfs.getFiles(imagesPath)) {
-            const [traderName, _] = image.split(".");
+        for (const image of fileSystem.getFiles(imagesPath)) {
+            // getFiles gives names with leading ‘/’
+            const traderName = image.split(".")[0].substring(1);
             const trader = traders[traderName];
 
             if (!trader) {
