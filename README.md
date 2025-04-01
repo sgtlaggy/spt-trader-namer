@@ -2,14 +2,16 @@
 
 This mod will let you change traders' nicknames and avatars.
 
-The novel difference from other avatar-swapping mods is that it uses trader nicknames instead of obscure avatar IDs that don't match the trader ID.
+The novel difference from other avatar-swapping mods is that it uses trader nicknames instead of obscure avatar IDs that don't match the trader ID. By default the name should be in your system language but this can be changed in `config/lang.json`. You can find language codes in `SPT_Data/Server/database/locales/`; the value for English is `en`, Russian is `ru`, etc.
+
+Instead of using a trader’s nickname you can use either their regular ID (for compatibility with Windows filename restrictions) or avatar ID (to easily switch from other avatar-switching mods).
 
 Both features of the mod should work for custom traders as long as this mod loads after them.
 
 ## Setting Trader Names
 Edit `config/names.json` and add a new line between the `{}` in the format `"Default Name": "New Name"`.
 
-The key (left) should be the trader's default English nickname like `Prapor` or `Therapist`, the value (right) is what you want their new name to be.
+The key (left) should be the trader's default nickname/ID like `Prapor` or `54cb50c76803fa8b248b4571`, the value (right) is what you want their new name to be.
 
 Examples:
 ```json
@@ -37,7 +39,7 @@ Valid keys are "FullName", "FirstName", "Nickname", "Location", and "Description
 ```
 
 ## Setting Trader Avatars
-Name an image based on the trader's default English nickname like `Prapor.jpg` and put it in the mod's `avatars` folder.
+Name an image based on the trader's default nickname/ID like `Prapor.jpg`, `54cb50c76803fa8b248b4571.jpg`, or `59b91ca086f77469a81232e4.jpg` and put it in the mod's `avatars` folder.
 
 Images should be JPEG or PNG and sizes around 500x500 work best.
 
