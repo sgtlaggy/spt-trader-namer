@@ -41,6 +41,28 @@ class Mod implements IPostDBLoadMod {
             traders[id] = traders[nick] = traders[avatar] = trader.base;
         });
 
+        const fileSystem = container.resolve<FileSystemSync>("FileSystemSync");
+        const imageRouter = container.resolve<ImageRouter>("ImageRouter");
+        const imagesPath = path.resolve(__dirname, "../avatars");
+
+        for (const image of fileSystem.getFiles(imagesPath)) {
+            // getFiles gives names with leading ‘/’
+            const nameOrId = image.split(".")[0].substring(1);
+            const trader = traders[nameOrId];
+
+            if (!trader) {
+                logger.info(`[TraderNamer] ${nameOrId} does not exist, not changing avatar.`);
+                continue;
+            }
+
+            const nick = nameLoc[`${trader._id} Nickname`] || trader.nickname || nameOrId;
+            logger.info(`[TraderNamer] Changing ${nick}'s avatar.`);
+
+            const avatarRouteNoExt = trader.avatar.split(".")[0];
+            const imagePath = path.join(imagesPath, image);
+            imageRouter.addRoute(avatarRouteNoExt, imagePath);
+        }
+
         for (const [nameOrId, newName] of Object.entries(NAMES)) {
             const trader = traders[nameOrId];
             var details = newName;
@@ -63,28 +85,6 @@ class Mod implements IPostDBLoadMod {
                     locale[`${trader._id} ${detail}`] = value;
                 }
             }
-        }
-
-        const fileSystem = container.resolve<FileSystemSync>("FileSystemSync");
-        const imageRouter = container.resolve<ImageRouter>("ImageRouter");
-        const imagesPath = path.resolve(__dirname, "../avatars");
-
-        for (const image of fileSystem.getFiles(imagesPath)) {
-            // getFiles gives names with leading ‘/’
-            const nameOrId = image.split(".")[0].substring(1);
-            const trader = traders[nameOrId];
-
-            if (!trader) {
-                logger.info(`[TraderNamer] ${nameOrId} does not exist, not changing avatar.`);
-                continue;
-            }
-
-            const nick = nameLoc[`${trader._id} Nickname`] || trader.nickname || nameOrId;
-            logger.info(`[TraderNamer] Changing ${nick}'s avatar.`);
-
-            const avatarRouteNoExt = trader.avatar.split(".")[0];
-            const imagePath = path.join(imagesPath, image);
-            imageRouter.addRoute(avatarRouteNoExt, imagePath);
         }
     }
 }
