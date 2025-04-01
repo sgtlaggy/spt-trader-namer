@@ -20,3 +20,4 @@
 /types
 /.dir-locals.el
 /avatars/NO_EMPTY_FOLDERS_IN_GIT
+/.envrc
