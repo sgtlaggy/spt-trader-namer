@@ -1,14 +1,15 @@
-﻿using SPTarkov.Common.Annotations;
+﻿using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using SPTarkov.DI.Annotations;
+using SPTarkov.Server.Core.DI;
+using SPTarkov.Server.Core.Models.Eft.Common.Tables;
+using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Utils;
 using SPTarkov.Server.Core.Utils.Json;
-using SPTarkov.Server.Core.Models.External;
-using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Routers;
-using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using SPTarkov.Server.Core.Services;
 
 
 namespace TraderNamer;
@@ -22,19 +23,19 @@ public record Config
     public Dictionary<string, JsonElement> Traders { get; set; }
 }
 
-[Injectable]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader)]
 public class Mod(
     ISptLogger<Mod> _logger,
     DatabaseService _db,
     LocaleService _locale,
     JsonUtil _json,
     ImageRouter _imageRouter
-) : IPostDBLoadMod
+) : IOnLoad
 {
     protected Config _config;
     protected string _modDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-    public void PostDBLoad()
+    public Task OnLoad()
     {
         try
         {
@@ -43,7 +44,7 @@ public class Mod(
         catch (JsonException)
         {
             _logger.Error("Invalid config.");
-            return;
+            return Task.CompletedTask;
         }
 
         var locale = _locale.GetLocaleDb();
@@ -135,6 +136,8 @@ public class Mod(
                 }
             }
         }
+
+        return Task.CompletedTask;
     }
 
     protected string GetTraderNick(Dictionary<string, string> loc, TraderBase trader, string fallback)
@@ -152,4 +155,20 @@ public class Mod(
 
         return fallback;
     }
+}
+
+public record ModMetadata : AbstractModMetadata
+{
+    public override string Name { get; set; } = "Trader Namer";
+    public override string Author { get; set; } = "sgtlaggy";
+    public override string Version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+    public override string Url { get; set; } = "https://github.com/sgtlaggy/spt-trader-namer";
+    public override string Licence { get; set; } = "MIT";
+    public override string SptVersion { get; set; } = "~4.0.0";
+    public override List<string> Contributors { get; set; }
+    public override List<string> LoadBefore { get; set; }
+    public override List<string> LoadAfter { get; set; }
+    public override List<string> Incompatibilities { get; set; }
+    public override Dictionary<string, string> ModDependencies { get; set; }
+    public override bool? IsBundleMod { get; set; }
 }
