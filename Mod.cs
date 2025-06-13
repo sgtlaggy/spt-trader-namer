@@ -7,7 +7,6 @@ using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Utils;
-using SPTarkov.Server.Core.Utils.Json;
 using SPTarkov.Server.Core.Routers;
 using SPTarkov.Server.Core.Services;
 
@@ -47,18 +46,15 @@ public class TraderNamer(
             return Task.CompletedTask;
         }
 
-        var locale = _locale.GetLocaleDb();
-        if (_config.Lang != "system")
+        Dictionary<string, string> locale;
+        try
         {
-            LazyLoad<Dictionary<string, string>> loc;
-            if (_db.GetLocales().Global.TryGetValue(_config.Lang, out loc))
-            {
-                locale = loc.Value;
-            }
-            else
-            {
-                _logger.Warning($"Selected locale {_config.Lang} is invalid, using default.");
-            }
+            locale = _locale.GetLocaleDb(_config.Lang);
+        }
+        catch
+        {
+            _logger.Warning($"Selected locale {_config.Lang} is invalid, using default.");
+            locale = _locale.GetLocaleDb();
         }
 
         var traders = new Dictionary<string, TraderBase>();
