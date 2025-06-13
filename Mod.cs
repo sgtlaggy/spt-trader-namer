@@ -23,9 +23,9 @@ public record Config
     public Dictionary<string, JsonElement> Traders { get; set; }
 }
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader)]
-public class Mod(
-    ISptLogger<Mod> _logger,
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+public class TraderNamer(
+    ISptLogger<TraderNamer> _logger,
     DatabaseService _db,
     LocaleService _locale,
     JsonUtil _json,
