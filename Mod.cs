@@ -83,6 +83,7 @@ public class TraderNamer(
             _logger.Info($"Changing {name}'s avatar.");
         }
 
+        Dictionary<string, Dictionary<string, string>> allTraderDetails = new();
         foreach (var (nameOrId, configDetails) in _config.Traders)
         {
             TraderBase trader;
@@ -124,16 +125,29 @@ public class TraderNamer(
             {
                 _logger.Info($"Changing {name}'s {detail} to {value}.");
             }
-            foreach (var loc in _db.GetLocales().Global.Values)
-            {
-                foreach (var (detail, value) in details)
-                {
-                    loc.Value[$"{trader.Id} {detail}"] = value;
-                }
-            }
+            allTraderDetails.Add(trader.Id, details);
         }
+        UpdateLocales(allTraderDetails);
 
         return Task.CompletedTask;
+    }
+
+    protected void UpdateLocales(Dictionary<string, Dictionary<string, string>> traderDetails)
+    {
+        foreach (var lazyLoc in _db.GetLocales().Global.Values)
+        {
+            lazyLoc.AddTransformer(loc =>
+            {
+                foreach (var (traderId, details) in traderDetails)
+                {
+                    foreach (var (detail, value) in details)
+                    {
+                        loc[$"{traderId} {detail}"] = value;
+                    }
+                }
+                return loc;
+            });
+        }
     }
 
     protected string GetTraderNick(Dictionary<string, string> loc, TraderBase trader, string fallback)
