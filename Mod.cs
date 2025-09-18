@@ -169,16 +169,15 @@ public class TraderNamer(
 
 public record ModMetadata : AbstractModMetadata
 {
-    public override string Name { get; set; } = "Trader Namer";
-    public override string Author { get; set; } = "sgtlaggy";
-    public override string Version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-    public override string Url { get; set; } = "https://github.com/sgtlaggy/spt-trader-namer";
-    public override string Licence { get; set; } = "MIT";
-    public override string SptVersion { get; set; } = "~4.0.0";
-    public override List<string> Contributors { get; set; }
-    public override List<string> LoadBefore { get; set; }
-    public override List<string> LoadAfter { get; set; }
-    public override List<string> Incompatibilities { get; set; }
-    public override Dictionary<string, string> ModDependencies { get; set; }
-    public override bool? IsBundleMod { get; set; }
+    public override string ModGuid { get; init; } = "com.sgtlaggy.tradernamer";
+    public override string Name { get; init; } = "Trader Namer";
+    public override string Author { get; init; } = "sgtlaggy";
+    public override SemanticVersioning.Version Version { get; init; } = new(Assembly.GetExecutingAssembly().GetName().Version.ToString());
+    public override string Url { get; init; } = "https://github.com/sgtlaggy/spt-trader-namer";
+    public override string License { get; init; } = "MIT";
+    public override SemanticVersioning.Version SptVersion { get; init; } = new("~4.0.0");
+    public override List<string> Contributors { get; init; }
+    public override List<string> Incompatibilities { get; init; }
+    public override Dictionary<string, SemanticVersioning.Version> ModDependencies { get; init; }
+    public override bool? IsBundleMod { get; init; }
 }
