@@ -172,8 +172,8 @@ public record ModMetadata : AbstractModMetadata
     public override string ModGuid { get; init; } = "com.sgtlaggy.tradernamer";
     public override string Name { get; init; } = "Trader Namer";
     public override string Author { get; init; } = "sgtlaggy";
-    public override SemanticVersioning.Version Version { get; init; } = new(Assembly.GetExecutingAssembly().GetName().Version.ToString());
     public override string Url { get; init; } = "https://github.com/sgtlaggy/spt-trader-namer";
+    public override SemanticVersioning.Version Version { get; init; } = new(Assembly.GetExecutingAssembly().GetName().Version!.ToString(3));
     public override string License { get; init; } = "MIT";
     public override SemanticVersioning.Version SptVersion { get; init; } = new("~4.0.0");
     public override List<string> Contributors { get; init; }
