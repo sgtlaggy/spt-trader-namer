@@ -16,23 +16,23 @@ namespace TraderNamer;
 public record Config
 {
     [JsonPropertyName("lang")]
-    public string Lang { get; set; }
+    public required string Lang { get; set; }
 
     [JsonPropertyName("traders")]
-    public Dictionary<string, JsonElement> Traders { get; set; }
+    public required Dictionary<string, JsonElement> Traders { get; set; }
 }
 
 [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
-public class TraderNamer(
-    ISptLogger<TraderNamer> _logger,
+public class Mod(
+    ISptLogger<Mod> _logger,
     DatabaseService _db,
     LocaleService _locale,
     JsonUtil _json,
-    ImageRouter _imageRouter
+ImageRouter _imageRouter
 ) : IOnLoad
 {
-    protected Config _config;
-    protected string _modDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+    protected Config? _config;
+    protected string _modDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
     public Task OnLoad()
     {
@@ -43,6 +43,11 @@ public class TraderNamer(
         catch (JsonException)
         {
             _logger.Error("Invalid config.");
+            return Task.CompletedTask;
+        }
+        if (_config is null)
+        {
+            _logger.Error("Missing config.");
             return Task.CompletedTask;
         }
 
@@ -60,7 +65,17 @@ public class TraderNamer(
         var traders = new Dictionary<string, TraderBase>();
         foreach (var (id, trader) in _db.GetTraders())
         {
-            var name = locale[$"{id} Nickname"];
+            if (trader.Base.Avatar is null)
+            {
+                continue;
+            }
+
+            string? name;
+            if (!locale.TryGetValue($"{id} Nickname", out name))
+            {
+                continue;
+            }
+
             var avatar = trader.Base.Avatar.Split('.')[0].Split('/').Last();
             traders[avatar] = traders[name] = traders[id] = trader.Base;
         }
@@ -69,27 +84,34 @@ public class TraderNamer(
         {
             var nameOrId = System.IO.Path.GetFileNameWithoutExtension(file);
 
-            TraderBase trader;
-            if (!traders.TryGetValue(nameOrId, out trader))
+            TraderBase? traderBase;
+            if (!traders.TryGetValue(nameOrId, out traderBase))
             {
-                _logger.Warning($"{nameOrId} does not exist, not changing avatar.");
+                _logger.Warning($"{nameOrId} not found, not changing avatar.");
                 continue;
             }
 
-            // TODO: may need to remove extension from avatar path
-            _imageRouter.AddRoute(trader.Avatar, file);
+            if (traderBase.Avatar is not null)
+            {
+                var extIndex = traderBase.Avatar.LastIndexOf('.');
+                _imageRouter.AddRoute(traderBase.Avatar.Substring(0, extIndex), file);
+            }
+            else
+            {
+                _logger.Warning($"{nameOrId} avatar not set yet.");
+            }
 
-            string name = GetTraderNick(locale, trader, nameOrId);
-            _logger.Info($"Changing {name}'s avatar.");
+            // string name = GetTraderNick(locale, traderBase, nameOrId);
+            // _logger.Info($"Changing {name}'s avatar.");
         }
 
         Dictionary<string, Dictionary<string, string>> allTraderDetails = new();
         foreach (var (nameOrId, configDetails) in _config.Traders)
         {
-            TraderBase trader;
-            if (!traders.TryGetValue(nameOrId, out trader))
+            TraderBase? traderBase;
+            if (!traders.TryGetValue(nameOrId, out traderBase))
             {
-                _logger.Warning($"{nameOrId} does not exist, not changing details.");
+                _logger.Warning($"{nameOrId} not found, not changing details.");
                 continue;
             }
 
@@ -97,7 +119,7 @@ public class TraderNamer(
             var badDetails = false;
             if (configDetails.ValueKind == JsonValueKind.String)
             {
-                details["Nickname"] = configDetails.GetString();
+                details["Nickname"] = configDetails.GetString()!;
             }
             else if (configDetails.ValueKind == JsonValueKind.Object)
             {
@@ -106,8 +128,9 @@ public class TraderNamer(
                     if (prop.Value.ValueKind != JsonValueKind.String)
                     {
                         badDetails = true;
+                        continue;
                     }
-                    details[prop.Name] = prop.Value.GetString();
+                    details[prop.Name] = prop.Value.GetString()!;
                 }
             }
             else
@@ -120,12 +143,12 @@ public class TraderNamer(
                 continue;
             }
 
-            var name = GetTraderNick(locale, trader, nameOrId);
+            var name = GetTraderNick(locale, traderBase, nameOrId);
             foreach (var (detail, value) in details)
             {
-                _logger.Info($"Changing {name}'s {detail} to {value}.");
+                // _logger.Info($"Changing {name}'s {detail} to {value}.");
             }
-            allTraderDetails.Add(trader.Id, details);
+            allTraderDetails.Add(traderBase.Id, details);
         }
         UpdateLocales(allTraderDetails);
 
@@ -142,7 +165,7 @@ public class TraderNamer(
                 {
                     foreach (var (detail, value) in details)
                     {
-                        loc[$"{traderId} {detail}"] = value;
+                        loc![$"{traderId} {detail}"] = value;
                     }
                 }
                 return loc;
@@ -152,7 +175,7 @@ public class TraderNamer(
 
     protected string GetTraderNick(Dictionary<string, string> loc, TraderBase trader, string fallback)
     {
-        string name;
+        string? name;
         if (loc.TryGetValue(trader.Id, out name))
         {
             return name;
@@ -172,12 +195,12 @@ public record ModMetadata : AbstractModMetadata
     public override string ModGuid { get; init; } = "com.sgtlaggy.tradernamer";
     public override string Name { get; init; } = "Trader Namer";
     public override string Author { get; init; } = "sgtlaggy";
-    public override string Url { get; init; } = "https://github.com/sgtlaggy/spt-trader-namer";
     public override SemanticVersioning.Version Version { get; init; } = new(Assembly.GetExecutingAssembly().GetName().Version!.ToString(3));
+    public override string? Url { get; init; } = "https://github.com/sgtlaggy/spt-trader-namer";
     public override string License { get; init; } = "MIT";
-    public override SemanticVersioning.Version SptVersion { get; init; } = new("~4.0.0");
-    public override List<string> Contributors { get; init; }
-    public override List<string> Incompatibilities { get; init; }
-    public override Dictionary<string, SemanticVersioning.Version> ModDependencies { get; init; }
+    public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
+    public override List<string>? Contributors { get; init; }
+    public override List<string>? Incompatibilities { get; init; }
+    public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
     public override bool? IsBundleMod { get; init; }
 }
