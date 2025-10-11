@@ -36,15 +36,40 @@
   </template>
   
   <body>
+    <label for="Lang">Language:</label>
+    <select name="Lang" id="Lang">
+      <option value="system">system</option>
+      <option value="ch">ch</option>
+      <option value="cz">cz</option>
+      <option value="en">en</option>
+      <option value="es-mx">es-mx</option>
+      <option value="es">es</option>
+      <option value="fr">fr</option>
+      <option value="ge">ge</option>
+      <option value="hu">hu</option>
+      <option value="it">it</option>
+      <option value="jp">jp</option>
+      <option value="kr">kr</option>
+      <option value="pl">pl</option>
+      <option value="po">po</option>
+      <option value="ro">ro</option>
+      <option value="ru">ru</option>
+      <option value="sk">sk</option>
+      <option value="tu">tu</option>
+    </select>
+
     <div id="Traders"></div>
     <button type="button" onclick="addTrader()">Add Trader</button>
     <br>
 
-    <button type="button" onclick="loadConfig()">⤒ Load</button>
+    <button type="button" onclick="loadConfig()">⭱ Load</button>
     <input type="file" onchange="onConfigUploaded()">
-    <button type="button" onclick="jsonifyConfig()">JSONify</button>
-    <button type="button" onclick="saveConfig()">Download ⭳</button>
-    <a id="Download" href="" download="names.json" hidden></a>
+    <button type="button" onclick="jsonifyConfig3()">JSONify (3.11)</button>
+    <button type="button" onclick="jsonifyConfig4()">JSONify (4.0)</button>
+    <button type="button" onclick="saveConfig3()">Download (3.11) ⭳</button>
+    <button type="button" onclick="saveConfig4()">Download (4.0) ⭳</button>
+    <a id="Download3" href="" download="names.json" hidden></a>
+    <a id="Download4" href="" download="config.json" hidden></a>
     <br>
     <textarea id="ConfigJsonArea" class="config-area" rows="7"></textarea>
     <br>

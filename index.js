@@ -50,7 +50,21 @@ function loadConfig() {
 
     clearTraders();
 
-    Object.entries(config).forEach(([name, properties]) => {
+    var traders;
+    if (config.traders === undefined) {
+        traders = config;
+    } else {
+        traders = config.traders;
+
+        const lang = document.querySelector("#Lang");
+        for (const option of lang.children) {
+            if (option.value == config.lang) {
+                option.selected = true;
+            }
+        }
+    }
+
+    Object.entries(traders).forEach(([name, properties]) => {
         const trader = addTrader();
         trader.querySelector("input").value = name;
 
@@ -72,31 +86,61 @@ async function onConfigUploaded() {
     loadConfig();
 }
 
-function jsonifyConfig() {
-    const config = {};
+function jsonifyTraders() {
+    const traders = {};
 
     document.querySelectorAll(".trader").forEach((trader) => {
         const traderName = trader.querySelector("input").value;
-        config[traderName] = {};
+        traders[traderName] = {};
         trader.querySelectorAll(".trader-property").forEach((prop) => {
             const sel = prop.querySelector("select");
             const text = sel.nextElementSibling;
-            config[traderName][sel.value] = text.value;
+            traders[traderName][sel.value] = text.value;
         });
     });
 
+    return traders;
+}
+
+function jsonifyConfig3() {
+    const config = jsonifyTraders();
     document.querySelector("#ConfigJsonArea").value = JSON.stringify(config, null, 2);
 }
 
-function saveConfig() {
-    jsonifyConfig();
+function jsonifyConfig4() {
+    var lang;
+    for (const option of document.querySelector("#Lang").children) {
+        if (option.selected) {
+            lang = option.value;
+            break;
+        }
+    }
 
+    const traders = jsonifyTraders();
+
+    const config = { lang, traders };
+    document.querySelector("#ConfigJsonArea").value = JSON.stringify(config, null, 2);
+}
+
+function getSaveUrl() {
     const blob = new Blob([document.querySelector("#ConfigJsonArea").value], {
         type: "application/json"
     });
-    const url = URL.createObjectURL(blob);
+    return URL.createObjectURL(blob);
+}
 
-    const a = document.querySelector("#Download");
-    a.href = url;
+function downloadFile(linkSelector) {
+    const a = document.querySelector(linkSelector);
+    a.href = getSaveUrl();
     a.click()
+}
+
+function saveConfig3() {
+    jsonifyConfig3();
+    downloadFile("#Download3");
+}
+
+function saveConfig4() {
+    jsonifyConfig4();
+    downloadFile("#Download4");
 }
