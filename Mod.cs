@@ -22,7 +22,7 @@ public record Config
     public required Dictionary<string, JsonElement> Traders { get; set; }
 }
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(TypePriority = OnLoadOrder.TraderRegistration + 99)]
 public class Mod(
     ISptLogger<Mod> _logger,
     DatabaseService _db,
